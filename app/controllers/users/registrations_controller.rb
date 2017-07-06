@@ -1,4 +1,6 @@
 class Users::RegistrationsController < Devise::RegistrationsController
+  before_action :select_plan, only: :new
+  
   # Extend default Devise gem functionality / Users with plan=2 save with Stripe subscription function
   def create
     super do |resource|
@@ -10,6 +12,14 @@ class Users::RegistrationsController < Devise::RegistrationsController
           resource.save
         end
       end
+    end
+  end
+  
+  private
+    def select_plan
+      unless(params[:plan] == '1' || params[:plan] == '2')
+        flash[:notice] = "Please select a membership plan to Sign Up"
+        redirect_to root_url
     end
   end
 end
